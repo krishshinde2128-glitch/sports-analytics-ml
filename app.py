@@ -17,7 +17,18 @@ team = st.sidebar.selectbox("Home/Focus Team", teams)
 opponent = st.sidebar.selectbox("Opponent Team", teams)
 venue = st.sidebar.selectbox("Venue", ["Home", "Away"])
 day = st.sidebar.selectbox("Match Day", ["Fri", "Sat", "Sun", "Mon", "Tue", "Wed", "Thu"])
-time = st.sidebar.slider("Match Hour (24h format)", 12, 23, 19)
+
+# Create a mapping for 12-hour display to 24-hour model input
+time_mapping = {
+    "12:00 PM": 12, "1:00 PM": 13, "2:00 PM": 14, "3:00 PM": 15,
+    "4:00 PM": 16, "5:00 PM": 17, "6:00 PM": 18, "7:00 PM": 19,
+    "8:00 PM": 20, "9:00 PM": 21, "10:00 PM": 22, "11:00 PM": 23
+}
+
+# Display 12-hour options to the user, defaulting to 7:00 PM (index 7)
+selected_time = st.sidebar.selectbox("Match Hour", list(time_mapping.keys()), index=7)
+# Convert the user's selection back to the 24-hour integer for the model
+time = time_mapping[selected_time] 
 
 if st.button("Predict Outcome"):
     if team == opponent:
