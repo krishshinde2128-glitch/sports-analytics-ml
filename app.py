@@ -12,22 +12,44 @@ teams = sorted(teams)
 st.title("⚽ La Liga Match Outcome Predictor")
 st.write("Predict whether a match will result in a Win, Draw, or Loss based on pre-match statistics.")
 
+# --- NEW SECTION: Dataset Info & Model Comparison ---
+with st.expander("📊 View Dataset & Model Performance Details"):
+    st.write("**Dataset Source:** matches_laliga.csv")
+    st.write("**Total Records Analyzed:** 4,700 historical matches")
+    
+    st.write("### Model Comparison")
+    st.write("Below is the performance comparison of the classification models tested during development:")
+    
+    # Exact metrics from your dataset run
+    metrics_data = {
+        "Model": ["Logistic Regression", "Decision Tree", "Random Forest"],
+        "Accuracy": [0.4979, 0.4574, 0.4234],
+        "Precision": [0.4582, 0.4088, 0.4106],
+        "Recall": [0.4979, 0.4574, 0.4234],
+        "F1-Score": [0.4612, 0.4181, 0.4142]
+    }
+    
+    metrics_df = pd.DataFrame(metrics_data)
+    # Display as a static table just like the project requirements PDF
+    st.table(metrics_df.set_index("Model"))
+    
+    st.caption("*Note: Predicting sports matches relies heavily on unpredictable human factors. The models perform better than random guessing (33%), highlighting the baseline difficulty of sports analytics.*")
+# ----------------------------------------------------
+
 st.sidebar.header("Match Details")
 team = st.sidebar.selectbox("Home/Focus Team", teams)
 opponent = st.sidebar.selectbox("Opponent Team", teams)
 venue = st.sidebar.selectbox("Venue", ["Home", "Away"])
 day = st.sidebar.selectbox("Match Day", ["Fri", "Sat", "Sun", "Mon", "Tue", "Wed", "Thu"])
 
-# Create a mapping for 12-hour display to 24-hour model input
+# Mapping for 12-hour display to 24-hour model input
 time_mapping = {
     "12:00 PM": 12, "1:00 PM": 13, "2:00 PM": 14, "3:00 PM": 15,
     "4:00 PM": 16, "5:00 PM": 17, "6:00 PM": 18, "7:00 PM": 19,
     "8:00 PM": 20, "9:00 PM": 21, "10:00 PM": 22, "11:00 PM": 23
 }
 
-# Display 12-hour options to the user, defaulting to 7:00 PM (index 7)
 selected_time = st.sidebar.selectbox("Match Hour", list(time_mapping.keys()), index=7)
-# Convert the user's selection back to the 24-hour integer for the model
 time = time_mapping[selected_time] 
 
 if st.button("Predict Outcome"):
